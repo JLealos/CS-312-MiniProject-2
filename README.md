@@ -1,6 +1,6 @@
 # CS 312 Mini Project 2
 
-A locally run public API web application built with Node.js, Express.js, Axios, and EJS.
+A locally run Pokédex web application built with Node.js, Express.js, Axios, and EJS. Users can search for a Pokémon by name or number and view its image, types, abilities, and stats.
 
 ## Project roadmap
 
@@ -12,23 +12,15 @@ A locally run public API web application built with Node.js, Express.js, Axios, 
 6. Add responsive styling.
 7. Test the main user workflows across desktop and mobile layouts.
 
-## Setup
+## API choice
+
+This project uses [PokéAPI](https://pokeapi.co/). It is free, supports CORS, and requires no authentication or API key. Its Pokémon data and images make it a good fit for a searchable Pokédex.
+
+## Run the project
 
 ```text
 npm install
-```
-
-## Development commands
-
-```text
 npm run dev
-npm start
-npm test
 ```
 
-## Application structure
-
-- `src/app.js`: Express configuration, form parsing, static files, and routes.
-- `src/server.js`: Starts the server on port 3000 by default.
-- `views/`: EJS templates rendered by the server.
-- `public/`: Static files such as CSS, images, and browser JavaScript.
+Open http://localhost:3000 in your browser.

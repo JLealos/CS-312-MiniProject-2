@@ -8,7 +8,54 @@
   <body>
     <main>
       <h1><%= pageTitle %></h1>
-      <p>The Express server and EJS view engine are connected.</p>
+      <p>Look up a Pokémon by name or number.</p>
+      <form action="/" method="get">
+        <label for="search">Pokémon name or number</label>
+        <input id="search" name="search" type="text" value="<%= search %>"
+          placeholder="pikachu or 25" maxlength="100" required aria-describedby="search-help">
+        <button type="submit">Search</button>
+        <a href="/">Clear search</a>
+        <p id="search-help">Use the full name. For names with multiple words, use hyphens (for example, mr-mime).</p>
+      </form>
+
+      <% if (error) { %>
+        <p role="alert"><%= error %></p>
+      <% } %>
+
+      <% if (pokemon) { %>
+        <section aria-labelledby="pokemon-name">
+          <h2 id="pokemon-name"><%= pokemon.name %> #<%= pokemon.id %></h2>
+          <% if (pokemon.image) { %>
+            <img src="<%= pokemon.image %>" alt="<%= pokemon.name %>" width="240" height="240">
+          <% } else { %>
+            <p>No image available.</p>
+          <% } %>
+          <dl>
+            <dt>Types</dt>
+            <dd><%= pokemon.types.join(', ') %></dd>
+            <dt>Height</dt>
+            <dd><%= pokemon.height %> m</dd>
+            <dt>Weight</dt>
+            <dd><%= pokemon.weight %> kg</dd>
+          </dl>
+          <h3>Abilities</h3>
+          <ul>
+            <% pokemon.abilities.forEach((ability) => { %>
+              <li><%= ability.name %><%= ability.hidden ? ' (hidden ability)' : '' %></li>
+            <% }); %>
+          </ul>
+          <table>
+            <caption>Base stats</caption>
+            <thead><tr><th scope="col">Stat</th><th scope="col">Value</th></tr></thead>
+            <tbody>
+              <% pokemon.stats.forEach((stat) => { %>
+                <tr><th scope="row"><%= stat.name %></th><td><%= stat.value %></td></tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </section>
+      <% } %>
     </main>
+    <footer><p>Pokémon data provided by <a href="https://pokeapi.co/">PokéAPI</a>.</p></footer>
   </body>
 </html>

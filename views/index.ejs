@@ -32,6 +32,22 @@
         <button type="submit">Random Pokémon</button>
       </form>
 
+      <section aria-labelledby="weather-heading">
+        <h2 id="weather-heading">Pokémon for your weather</h2>
+        <form action="/weather" method="get">
+          <label for="city">City name</label>
+          <input id="city" name="city" value="<%= city %>" placeholder="Phoenix"
+            minlength="2" maxlength="100" required aria-describedby="city-help">
+          <button type="submit">Find weather Pokémon</button>
+          <p id="city-help">We use the first matching city. Check the location shown in your results.</p>
+        </form>
+        <% if (weather) { %>
+          <h3><%= weather.location %></h3>
+          <p>Current weather: <%= weather.condition %>, <%= weather.temperature %> °C.</p>
+          <p>Suggested type: <strong><%= displayName(weather.type) %></strong>.</p>
+          <p>These are our app's weather-themed suggestions, not official game mechanics.</p>
+        <% } %>
+      </section>
       <% if (matches) { %>
         <section aria-labelledby="type-heading">
           <h2 id="type-heading"><%= displayName(selectedType) %> Pokémon</h2>
@@ -85,6 +101,6 @@
         </section>
       <% } %>
     </main>
-    <footer><p>Pokémon data provided by <a href="https://pokeapi.co/">PokéAPI</a>.</p></footer>
+    <footer><p>Pokémon data provided by <a href="https://pokeapi.co/">PokéAPI</a>. Weather data by <a href="https://open-meteo.com/">Open-Meteo</a> under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p></footer>
   </body>
 </html>

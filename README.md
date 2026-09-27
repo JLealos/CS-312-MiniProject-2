@@ -16,6 +16,8 @@ A locally run Pokédex web application built with Node.js, Express.js, Axios, an
 
 This project uses [PokéAPI](https://pokeapi.co/). It is free, supports CORS, and requires no authentication or API key. Its Pokémon data and images make it a good fit for a searchable Pokédex.
 
+The app also uses [Open-Meteo](https://open-meteo.com/) to suggest Pokémon types based on a city's current weather, such as Water for rain or Electric for thunderstorms. No API key is needed for this noncommercial project.
+
 ## Run the project
 
 ```text

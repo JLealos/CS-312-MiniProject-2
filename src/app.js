@@ -27,23 +27,82 @@ app.use((request, response, next) => {
   response.locals = {
     ...response.locals,
     pageTitle: 'Pokédex', search: '', pokemon: null, error: null,
-    pokemonTypes, selectedType: '', matches: null, displayName,
+    pokemonTypes, selectedType: '', matches: null, displayName, city: '', weather: null,
   };
   next();
 });
 
+async function getPokemonByType(type) {
+  if (!typeCache.has(type)) {
+    const { data } = await axios.get(`https://pokeapi.co/api/v2/type/${type}`, { timeout: 10000 });
+    typeCache.set(type, data.pokemon.map((entry) => entry.pokemon.name));
+  }
+  return typeCache.get(type);
+}
+
+function weatherTheme(code) {
+  if ([95, 96, 99].includes(code)) return { condition: 'Thunderstorms', type: 'electric' };
+  if ([71, 73, 75, 77, 85, 86].includes(code)) return { condition: 'Snow', type: 'ice' };
+  if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(code)) {
+    return { condition: 'Rain or drizzle', type: 'water' };
+  }
+  if ([45, 48].includes(code)) return { condition: 'Fog', type: 'ghost' };
+  if ([0, 1].includes(code)) return { condition: 'Clear or mainly clear skies', type: 'fire' };
+  if ([2, 3].includes(code)) return { condition: 'Cloudy skies', type: 'flying' };
+  return { condition: 'Other weather conditions', type: 'normal' };
+}
+
+app.get('/weather', async (request, response) => {
+  const city = typeof request.query.city === 'string' ? request.query.city.trim().replace(/\s+/g, ' ') : '';
+  const view = { city, weather: null };
+  if (city.length < 2 || city.length > 100) {
+    return response.status(400).render('index', {
+      ...view, error: 'Enter a city name between 2 and 100 characters.',
+    });
+  }
+  try {
+    const locations = await axios.get('https://geocoding-api.open-meteo.com/v1/search', {
+      params: { name: city, count: 1, language: 'en', format: 'json' }, timeout: 10000,
+    });
+    const location = locations.data.results?.[0];
+    if (!location) {
+      return response.status(404).render('index', {
+        ...view, error: 'No city found. Check the spelling and try another city name.',
+      });
+    }
+    const { data } = await axios.get('https://api.open-meteo.com/v1/forecast', {
+      params: {
+        latitude: location.latitude, longitude: location.longitude,
+        current: 'temperature_2m,weather_code', timezone: 'auto',
+      }, timeout: 10000,
+    });
+    if (!Number.isFinite(data.current?.temperature_2m) || !Number.isInteger(data.current?.weather_code)) {
+      throw new Error('Current weather unavailable');
+    }
+    const theme = weatherTheme(data.current.weather_code);
+    view.weather = {
+      ...theme,
+      location: [location.name, location.admin1, location.country].filter(Boolean).join(', '),
+      temperature: data.current.temperature_2m,
+    };
+    const matches = await getPokemonByType(theme.type);
+    return response.render('index', { ...view, selectedType: theme.type, matches });
+  } catch (error) {
+    return response.status(503).render('index', {
+      ...view,
+      error: view.weather
+        ? 'Weather loaded, but Pokémon suggestions are unavailable. Please try again.'
+        : 'We could not load the weather right now. Please try your city again in a moment.',
+    });
+  }
+});
 app.get('/types', async (request, response) => {
   const selectedType = typeof request.query.type === 'string' ? request.query.type : '';
   if (!pokemonTypes.includes(selectedType)) {
     return response.status(400).render('index', { error: 'Choose a Pokémon type from the list.' });
   }
   try {
-    let matches = typeCache.get(selectedType);
-    if (!matches) {
-      const { data } = await axios.get(`https://pokeapi.co/api/v2/type/${selectedType}`, { timeout: 10000 });
-      matches = data.pokemon.map((entry) => entry.pokemon.name);
-      typeCache.set(selectedType, matches);
-    }
+    const matches = await getPokemonByType(selectedType);
     return response.render('index', { selectedType, matches });
   } catch (error) {
     return response.status(503).render('index', {

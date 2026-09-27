@@ -18,6 +18,35 @@
         <p id="search-help">Use the full name. For names with multiple words, use hyphens (for example, mr-mime).</p>
       </form>
 
+      <form action="/types" method="get">
+        <label for="type">Browse by type</label>
+        <select id="type" name="type" required>
+          <option value="">Choose a type</option>
+          <% pokemonTypes.forEach((type) => { %>
+            <option value="<%= type %>" <%= selectedType === type ? 'selected' : '' %>><%= displayName(type) %></option>
+          <% }); %>
+        </select>
+        <button type="submit">Filter Pokémon</button>
+      </form>
+      <form action="/random" method="get">
+        <button type="submit">Random Pokémon</button>
+      </form>
+
+      <% if (matches) { %>
+        <section aria-labelledby="type-heading">
+          <h2 id="type-heading"><%= displayName(selectedType) %> Pokémon</h2>
+          <p><%= matches.length %> matches. Select a Pokémon to view its details.</p>
+          <% if (matches.length === 0) { %>
+            <p>No Pokémon found for this type. Try another type.</p>
+          <% } %>
+          <ul>
+            <% matches.forEach((name) => { %>
+              <li><a href="/?search=<%= encodeURIComponent(name) %>"><%= displayName(name) %></a></li>
+            <% }); %>
+          </ul>
+        </section>
+      <% } %>
+
       <% if (error) { %>
         <p role="alert"><%= error %></p>
       <% } %>

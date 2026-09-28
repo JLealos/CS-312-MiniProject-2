@@ -12,6 +12,12 @@ A locally run Pokédex web application built with Node.js, Express.js, Axios, an
 6. Add responsive styling.
 7. Test the main user workflows across desktop and mobile layouts.
 
+## Features
+
+- Search a pokemon by name or number, browse by type, or pick a random Pokémon.
+- Enter a city to see current weather and five random Pokémon of a matching type, based on the current weather. 
+- Responsive Pokédex themed layout with helpful search and API error messages.
+
 ## API choice
 
 This project uses [PokéAPI](https://pokeapi.co/). It is free, supports CORS, and requires no authentication or API key. Its Pokémon data and images make it a good fit for a searchable Pokédex.

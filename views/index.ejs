@@ -3,36 +3,43 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
     <title><%= pageTitle %></title>
   </head>
   <body>
-    <main>
-      <h1><%= pageTitle %></h1>
-      <p>Look up a Pokémon by name or number.</p>
-      <form action="/" method="get">
-        <label for="search">Pokémon name or number</label>
-        <input id="search" name="search" type="text" value="<%= search %>"
-          placeholder="pikachu or 25" maxlength="100" required aria-describedby="search-help">
-        <button type="submit">Search</button>
-        <a href="/">Clear search</a>
-        <p id="search-help">Use the full name. For names with multiple words, use hyphens (for example, mr-mime).</p>
-      </form>
+    <main class="pokedex">
+      <header class="device-header">
+        <div class="device-lights" aria-hidden="true"><span class="lens"></span><i></i><i></i><i></i></div>
+        <h1><%= pageTitle %></h1>
+      </header>
+      <p class="intro">Look up a Pokémon by name or number.</p>
+      <section class="search-area" aria-label="Find Pokemon">
+        <div class="search-toolbar">
+          <form action="/" method="get" class="name-search">
+            <label class="visually-hidden" for="search">Pokémon name or number</label>
+            <input id="search" name="search" type="text" value="<%= search %>"
+              placeholder="Search by name or number" maxlength="100" required aria-describedby="search-help">
+            <button type="submit">Search</button>
+          </form>
+          <form action="/types" method="get" class="type-search">
+            <label class="visually-hidden" for="type">Browse by type</label>
+            <select id="type" name="type" required>
+              <option value="">Choose a type</option>
+              <% pokemonTypes.forEach((type) => { %>
+                <option value="<%= type %>" <%= selectedType === type ? 'selected' : '' %>><%= displayName(type) %></option>
+              <% }); %>
+            </select>
+            <button type="submit">Filter</button>
+          </form>
+          <form action="/random" method="get">
+            <button type="submit">Random Pokémon</button>
+          </form>
+          <a class="clear-search" href="/">Clear</a>
+        </div>
+        <p id="search-help">Use the full name, with hyphens for multiple words (for example, mr-mime), or browse by type.</p>
+      </section>
 
-      <form action="/types" method="get">
-        <label for="type">Browse by type</label>
-        <select id="type" name="type" required>
-          <option value="">Choose a type</option>
-          <% pokemonTypes.forEach((type) => { %>
-            <option value="<%= type %>" <%= selectedType === type ? 'selected' : '' %>><%= displayName(type) %></option>
-          <% }); %>
-        </select>
-        <button type="submit">Filter Pokémon</button>
-      </form>
-      <form action="/random" method="get">
-        <button type="submit">Random Pokémon</button>
-      </form>
-
-      <section aria-labelledby="weather-heading">
+      <section class="weather-panel" aria-labelledby="weather-heading">
         <h2 id="weather-heading">Pokémon for your weather</h2>
         <form action="/weather" method="get">
           <label for="city">City name</label>
@@ -48,8 +55,30 @@
           <p>These are our app's weather-themed suggestions, not official game mechanics.</p>
         <% } %>
       </section>
+      <% if (recommendations) { %>
+        <section class="results-panel" aria-labelledby="recommendations-heading">
+          <h2 id="recommendations-heading">Your weather recommendations</h2>
+          <p><%= recommendations.length %> random examples of the suggested type. Select a Pokémon to view its details.</p>
+          <% if (recommendations.length === 0) { %>
+            <p>No recommendations available for this type.</p>
+          <% } %>
+          <ul class="recommendations">
+            <% recommendations.forEach((suggestion) => { %>
+              <li>
+                <a href="/?search=<%= encodeURIComponent(suggestion.name) %>">
+                  <% if (suggestion.image) { %>
+                    <img src="<%= suggestion.image %>" alt="" width="120" height="120" loading="lazy">
+                  <% } %>
+                  <%= displayName(suggestion.name) %>
+                </a>
+              </li>
+            <% }); %>
+          </ul>
+          <a href="/types?type=<%= selectedType %>">View all <%= displayName(selectedType) %> Pokémon</a>
+        </section>
+      <% } %>
       <% if (matches) { %>
-        <section aria-labelledby="type-heading">
+        <section class="results-panel type-results" aria-labelledby="type-heading">
           <h2 id="type-heading"><%= displayName(selectedType) %> Pokémon</h2>
           <p><%= matches.length %> matches. Select a Pokémon to view its details.</p>
           <% if (matches.length === 0) { %>
@@ -67,8 +96,15 @@
         <p role="alert"><%= error %></p>
       <% } %>
 
+      <% if (!pokemon && !matches && !recommendations && !weather && !error) { %>
+        <section class="empty-screen" aria-label="Ready to search">
+          <div class="pokeball" aria-hidden="true"></div>
+          <h2>Search for a Pokémon</h2>
+          <p>Enter a name or number above to see its details.</p>
+        </section>
+      <% } %>
       <% if (pokemon) { %>
-        <section aria-labelledby="pokemon-name">
+        <section class="pokemon-panel" aria-labelledby="pokemon-name">
           <h2 id="pokemon-name"><%= pokemon.name %> #<%= pokemon.id %></h2>
           <% if (pokemon.image) { %>
             <img src="<%= pokemon.image %>" alt="<%= pokemon.name %>" width="240" height="240">
@@ -77,7 +113,7 @@
           <% } %>
           <dl>
             <dt>Types</dt>
-            <dd><%= pokemon.types.join(', ') %></dd>
+            <dd><% pokemon.types.forEach((type) => { %><span class="type-badge" data-type="<%= type.toLowerCase() %>"><%= type %></span><% }); %></dd>
             <dt>Height</dt>
             <dd><%= pokemon.height %> m</dd>
             <dt>Weight</dt>
@@ -94,7 +130,7 @@
             <thead><tr><th scope="col">Stat</th><th scope="col">Value</th></tr></thead>
             <tbody>
               <% pokemon.stats.forEach((stat) => { %>
-                <tr><th scope="row"><%= stat.name %></th><td><%= stat.value %></td></tr>
+                <tr><th scope="row"><%= stat.name %></th><td><meter min="0" max="255" value="<%= stat.value %>" aria-label="<%= stat.name %>"><%= stat.value %></meter> <span><%= stat.value %></span></td></tr>
               <% }); %>
             </tbody>
           </table>
@@ -102,5 +138,6 @@
       <% } %>
     </main>
     <footer><p>Pokémon data provided by <a href="https://pokeapi.co/">PokéAPI</a>. Weather data by <a href="https://open-meteo.com/">Open-Meteo</a> under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p></footer>
+    <script src="/js/app.js" defer></script>
   </body>
 </html>

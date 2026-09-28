@@ -1,0 +1,496 @@
+/* A simple red casing and inset screens inspired by the original Pokedex. */
+/* 1. Base typography and page layout */
+:root {
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #243332;
+  background: #eceee9;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 32px 18px 16px;
+}
+
+/* 2. Pokedex casing, header, and indicator lights */
+.pokedex {
+  max-width: 1120px;
+  margin: auto;
+  padding: 28px;
+  background: #cf163b;
+  border: 3px solid #77152b;
+  border-radius: 28px 28px 20px 20px;
+  box-shadow: 0 5px 0 #8c1730;
+}
+
+.device-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding-bottom: 22px;
+  border-bottom: 2px solid #8c1730;
+  color: white;
+}
+
+.device-lights {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+
+.lens {
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  border: 5px solid #e4e8df;
+  background: radial-gradient(circle at 32% 27%, #c0f5ff 0 10%, #35bcf0 12% 37%, #1389b4 65%);
+  box-shadow: 0 0 0 2px #343d3a;
+}
+
+.device-lights i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #712238;
+  background: #ff6e6e;
+}
+
+.device-lights i:nth-of-type(2) {
+  background: #f4d850;
+}
+
+.device-lights i:nth-of-type(3) {
+  background: #74cf92;
+}
+
+h1 {
+  font-size: 2.3rem;
+  margin: 0;
+  letter-spacing: -.04em;
+}
+
+.intro {
+  color: #fff3f4;
+  margin: 20px 0 16px;
+  line-height: 1.6;
+}
+
+/* 3. Shared text and panel styles */
+h2 {
+  font-size: 1.2rem;
+  margin: 0 0 12px;
+}
+
+h3 {
+  font-size: 1.1rem;
+}
+
+p {
+  line-height: 1.6;
+}
+
+a {
+  color: #155b69;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: #98203c;
+}
+
+.search-area, .weather-panel, .results-panel, /* 8. Pokemon artwork, details, and type badges */
+.pokemon-panel {
+  padding: 20px;
+  background: #fafbf7;
+  border: 2px solid #792038;
+  border-radius: 10px;
+  margin-bottom: 18px;
+}
+
+/* 4. Search toolbar and form controls */
+.search-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.search-toolbar form {
+  display: flex;
+  min-width: 0;
+  margin: 0;
+}
+
+.name-search {
+  flex: 1 1 260px;
+}
+
+input, select, button {
+  font: inherit;
+  min-height: 44px;
+  border: 1px solid #9daea6;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+input, select {
+  background: #fff;
+  color: #243332;
+  min-width: 0;
+}
+
+.name-search input {
+  width: 100%;
+}
+
+.search-toolbar input, .search-toolbar select {
+  border-radius: 6px 0 0 6px;
+}
+
+.name-search button, .type-search button {
+  border-radius: 0 6px 6px 0;
+}
+
+button {
+  background: #164b43;
+  border-color: #164b43;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+button:hover {
+  background: #24695e;
+}
+
+button:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+
+.clear-search {
+  padding: 10px 3px;
+  font-size: .85rem;
+}
+
+:focus-visible {
+  outline: 3px solid #1687be;
+  outline-offset: 3px;
+}
+
+#search-help, #city-help {
+  font-size: .8rem;
+  color: #52645b;
+  margin: 10px 0 0;
+}
+
+/* 5. Weather search and results */
+.weather-panel {
+  background: #e5efdc;
+}
+
+.weather-panel form {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.weather-panel label {
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+.weather-panel input {
+  flex: 1 1 180px;
+}
+
+#city-help {
+  flex-basis: 100%;
+}
+
+.weather-panel h3 {
+  margin-bottom: 4px;
+}
+
+.weather-panel p {
+  margin-bottom: 5px;
+}
+
+/* 6. Empty display before a search */
+.empty-screen {
+  text-align: center;
+  background: #243d36;
+  color: #d8e5d6;
+  border: 9px solid #d9dfd5;
+  outline: 2px solid #792038;
+  border-radius: 12px;
+  padding: 35px 15px;
+}
+
+.empty-screen p {
+  color: #b5c9bb;
+  font-size: .9rem;
+}
+
+.pokeball {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  border: 3px solid #93ac9d;
+  border-radius: 50%;
+  background: linear-gradient(transparent 45%, #93ac9d 45% 55%, transparent 55%);
+}
+
+/* 7. Weather recommendation cards and type results */
+.recommendations {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+}
+
+.recommendations a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+  min-height: 155px;
+  padding: 12px 6px;
+  border: 1px solid #d0dbcd;
+  border-radius: 8px;
+  background: #eef3e9;
+  text-decoration: none;
+  font-weight: 600;
+  text-align: center;
+  overflow-wrap: anywhere;
+  transition: background .15s;
+}
+
+.recommendations a:hover {
+  background: #dcebd4;
+}
+
+.recommendations img {
+  width: 100%;
+  max-width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
+.type-results ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.type-results li a {
+  display: block;
+  padding: 10px;
+  background: #eef3e9;
+  border-radius: 5px;
+  overflow-wrap: anywhere;
+}
+
+.pokemon-panel {
+  display: flow-root;
+}
+
+.pokemon-panel > img {
+  float: left;
+  width: 40%;
+  height: 280px;
+  object-fit: contain;
+  margin: 0 28px 20px 0;
+  background: #e6eddf;
+  border: 8px solid #cdd7c6;
+  border-radius: 10px;
+}
+
+dl {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 12px;
+}
+
+dt {
+  color: #52645b;
+}
+
+dd {
+  margin: 0;
+}
+
+.type-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  margin: 0 4px 4px 0;
+  border-radius: 20px;
+  background: #dbe4d8;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+[data-type="fire"] {
+  background: #ffdabd;
+}
+
+[data-type="water"], [data-type="ice"] {
+  background: #ccebf9;
+}
+
+[data-type="grass"], [data-type="bug"] {
+  background: #d5edb6;
+}
+
+[data-type="electric"] {
+  background: #f7e999;
+}
+
+[data-type="psychic"], [data-type="fairy"] {
+  background: #f9d4e6;
+}
+
+[data-type="poison"], [data-type="ghost"], [data-type="dragon"] {
+  background: #e5daf5;
+}
+
+/* 9. Base stats table and meters */
+table {
+  clear: both;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+}
+
+caption {
+  text-align: left;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 16px 0 10px;
+}
+
+th, td {
+  padding: 9px;
+  text-align: left;
+  border-bottom: 1px solid #e1e7dc;
+}
+
+td {
+  width: 65%;
+}
+
+td span {
+  display: inline-block;
+  min-width: 28px;
+  text-align: right;
+}
+
+meter {
+  width: 75%;
+  height: 14px;
+  accent-color: #26836c;
+}
+
+/* 10. Error messages and attribution */
+[role="alert"] {
+  padding: 14px 18px;
+  background: #fff0cb;
+  border: 2px solid #8b4a14;
+  border-radius: 8px;
+  color: #653310;
+}
+
+footer {
+  max-width: 1000px;
+  margin: 24px auto 0;
+  text-align: center;
+  font-size: .75rem;
+  color: #54625a;
+}
+
+/* 11. Accessible labels (hidden visually, available to screen readers) */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 12. Mobile layout */
+@media (max-width: 700px) {
+  body {
+    padding: 12px 8px;
+  }
+
+  .pokedex {
+    padding: 16px;
+  }
+
+  .device-header {
+    gap: 16px;
+  }
+
+  .device-lights {
+    gap: 5px;
+  }
+
+  .lens {
+    width: 48px;
+    height: 48px;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+  }
+
+  .search-area, .weather-panel, .results-panel, .pokemon-panel {
+    padding: 14px;
+  }
+
+  .name-search {
+    flex-basis: 100%;
+  }
+
+  .type-search {
+    flex: 1;
+  }
+
+  .type-search select {
+    flex: 1;
+    width: 100%;
+  }
+
+  .recommendations {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pokemon-panel > img {
+    float: none;
+    width: 100%;
+    margin: 0 0 15px;
+  }
+
+}
+
+/* 13. Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+
+}
